@@ -1,0 +1,29 @@
+FROM python:3.12-slim
+
+# Define directorio de trabajo
+WORKDIR /app
+
+# Instala las dependencias necesarias
+RUN apt-get update && apt-get install -y \
+libpq-dev \
+netcat-openbsd \
+gcc \
+&& rm -rf /var/lib/apt/lists/*
+
+# Copia requirementes e instala las dependencias necesarias
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copia el código del backend y da permisos al entrypoint
+COPY . .
+RUN chmod +x ./entrypoint.sh
+
+# Seteo de variables de entorno
+
+# Desactiva la creación de bytecodes
+ENV PYTHONDONTWRITEBYTECODE=1
+# Desactiva la salida en buffer
+ENV PYTHONUNBUFFERED=1
+
+# Run del entrypoint
+ENTRYPOINT ["sh","./entrypoint.sh"]
