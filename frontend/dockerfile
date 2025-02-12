@@ -9,6 +9,12 @@ RUN npm install
 
 # Copia el resto del código fuente y construye el frontend
 COPY . .
+
+
+# Define la variable de entorno en el build
+ARG REACT_APP_API_SERVER
+ENV REACT_APP_API_SERVER=${REACT_APP_API_SERVER}
+
 RUN npm run build
 
 EXPOSE 3000
