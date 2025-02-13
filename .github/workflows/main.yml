@@ -24,13 +24,17 @@ jobs:
             file: ./prueba3/Dockerfile
             context: ./prueba3
             push: true
-            tags: ${{ secrets.DOCKERHUB_USERNAME }}/app:${{ github.ref_name }}-${{ github.sha }}
+            tags: | 
+                  ${{ secrets.DOCKERHUB_USERNAME }}/app:${{ github.ref_name }}-${{ github.sha }}
+                  ${{ secrets.DOCKERHUB_USERNAME }}/app:latest
+                  
             
   deployment:
     runs-on: ubuntu-latest
     needs: docker_build
 
     steps:
+    
       - name: Checkout code
         uses: actions/checkout@v4.2.2
 
@@ -38,4 +42,5 @@ jobs:
         working-directory: ./prueba3
         run: |
           docker compose down
-          docker compose up --build -d
+          docker compose pull  # Asegura que se usa la última imagen
+          docker compose up -d
